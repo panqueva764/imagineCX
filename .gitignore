@@ -1,0 +1,5 @@
+echo "/vendor" >> .gitignore
+echo "/node_modules" >> .gitignore
+echo "/public/storage" >> .gitignore
+echo ".env" >> .gitignore
+echo "/storage/*.key" >> .gitignore

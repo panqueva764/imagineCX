@@ -1,0 +1,4 @@
+name: imaginecx
+recipe: laravel
+config:
+  webroot: .
