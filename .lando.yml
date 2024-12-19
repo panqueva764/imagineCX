@@ -1,4 +1,16 @@
 name: imaginecx
 recipe: laravel
 config:
-  webroot: .
+  webroot: public
+  via: nginx
+services:
+  appserver:
+    xdebug: true
+    version: 3.3.1
+  database:
+    type: mysql
+    portforward: true
+    creds:
+      database: laravel
+      user: laravel_prueba
+      password: 123456
