@@ -1,0 +1,16 @@
+proxy:
+  appserver_nginx:
+    - imaginecx.lando.site
+tooling:
+  uli:
+    service: appserver
+    description: Nos da la url de nuestro Local
+    cmd: "drush uli --uri imaginecx.lndo.site"
+  cinstall:
+    service: appserver
+    description: Instala las dependencias del composer
+    cmd:
+     - rm -rf vendor
+     - rm -f composer.lock
+     - composer install
+     - composer update

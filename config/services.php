@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'oracle' => [
+        'url' => env('ORACLE_API_URL'),
+        'user' => env('ORACLE_API_USER'),
+        'password' => env('ORACLE_API_PASSWORD'),
+    ],
+
 ];
