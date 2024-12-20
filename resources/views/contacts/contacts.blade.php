@@ -133,6 +133,73 @@
             color: #3b82f6;
             vertical-align: middle;
         }
+        /* Estilos del Popup */
+        .modal {
+            display: none; /* Ocultar por defecto */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4); /* Fondo oscuro */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input {
+            margin-top: 5px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+
 
         /* Responsive styles */
         @media (max-width: 768px) {
@@ -163,6 +230,9 @@
             <h1>Mis Contactos</h1>
             <div class="search-container">
                 <input type="search" id="search-input" placeholder="Search contacts" class="search-bar" oninput="filterContacts()">
+            </div>
+            <div class="create-contact-container">
+            <button id="openModalBtn" class="btn btn-primary"> + </button>
             </div>
         </header>
         <main class="content">
@@ -210,6 +280,34 @@
             </div>
         </main>
     </div>
+
+    <div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="closeModalBtn">&times;</span>
+        <h2>Crear Nuevo Contacto</h2>
+        <form id="createContactForm">
+            <label for="firstName">Nombre</label>
+            <input type="text" id="firstName" name="firstName" required>
+
+            <label for="lastName">Apellido</label>
+            <input type="text" id="lastName" name="lastName" required>
+
+            <label for="city">Ciudad</label>
+            <input type="text" id="city" name="city" required>
+
+            <label for="country">País</label>
+            <input type="text" id="country" name="country" required>
+
+            <label for="zipCode">Código Postal</label>
+            <input type="text" id="zipCode" name="zipCode" required>
+
+            <label for="address">Dirección</label>
+            <input type="text" id="address" name="address" required>
+
+            <button type="submit" id="createContactBtn">Crear Nuevo Contacto</button>
+        </form>
+    </div>
+</div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
@@ -311,6 +409,68 @@
                 });
             });
         });
+
+        // Obtener el modal y el botón de abrir
+        var modal = document.getElementById("contactModal");
+        var openModalBtn = document.getElementById("openModalBtn");
+        var closeModalBtn = document.getElementById("closeModalBtn");
+
+        // Abrir el modal
+        openModalBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // Cerrar el modal
+        closeModalBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Cerrar el modal si el usuario hace clic fuera del modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Lógica para enviar el formulario (AJAX o similar)
+        document.getElementById("createContactForm").onsubmit = function(e) {
+            e.preventDefault();
+
+            // Recoger los datos del formulario
+            var formData = {
+                firstName: document.getElementById("firstName").value,
+                lastName: document.getElementById("lastName").value,
+                city: document.getElementById("city").value,
+                country: document.getElementById("country").value,
+                zipCode: document.getElementById("zipCode").value,
+                address: document.getElementById("address").value,
+                _token: '{{ csrf_token() }}', // Token CSRF
+            };
+
+            // Realizar solicitud AJAX para crear el contacto
+            $.ajax({
+                    url: '/contacts', // Cambia por la ruta que maneje la creación de contactos en tu backend
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        var parsedResponse = JSON.parse(response);  // Si la respuesta es una cadena dentro de un array
+                        // Verificar que la respuesta contiene el ID del nuevo contacto
+                        if (response) {
+                            alert("¡Nuevo contacto creado con éxito! El ID es: " + parsedResponse.id);
+                        } else {
+                            alert("¡Nuevo contacto creado con éxito!" + response.id);
+                        }
+                        
+                        modal.style.display = "none"; // Cerrar el modal
+                        // Actualizar la lista de contactos o recargar la página
+                        location.reload(); // Recarga la página o actualiza la lista de contactos
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Ocurrió un error al crear el contacto.");
+                    }
+                });
+            }
+
     </script>
 
     </body>

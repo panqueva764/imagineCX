@@ -96,4 +96,86 @@ class ContactsController extends Controller
         return response()->json(['error' => "Error HTTP: $httpCode", 'response' => $response], $httpCode);
     }
 
+    public function createContact(Request $request)
+    {
+        // Validar que se recibieron los datos necesarios
+        $firstName = $request->input('firstName');
+        $lastName = $request->input('lastName');
+        //$email = $request->input('email');
+        $city = $request->input('city');
+        $country = $request->input('country');
+        $zipCode = $request->input('zipCode');
+        $address = $request->input('address');
+    
+        if (!$firstName || !$lastName || !$city || !$country || !$zipCode || !$address) {
+            return response()->json(['error' => 'Todos los campos son obligatorios.'], 400);
+        }
+    
+        // Leer las configuraciones desde config/services.php
+        $url = config('services.oracle.url') . 'contacts';
+        $username = config('services.oracle.user');
+        $password = config('services.oracle.password');
+    
+        // Datos para enviar a la API
+        $data = [
+            'name' => [
+                'first' => $firstName,
+                'last' => $lastName,
+            ],
+            'emails' => [
+                [
+                    'address' => 'prueba@imaginecx.com',
+                    'addressType' => [
+                        'id' => 1, // Este valor puede variar según tu API
+                    ],
+                ]
+            ],
+            'address' => [
+                'city' => $city,
+                'country' => [
+                    'lookupName' => 2, // Aquí debes usar el LookupName en lugar del ID
+                ],
+                'postalCode' => $zipCode,
+                'stateOrProvince' => [
+                    'id' => 10, // Este valor puede variar según tu API
+                ],
+                'street' => $address,
+            ]
+        ];
+    
+        // Inicializar cURL
+        $ch = curl_init();
+    
+        // Configurar opciones de cURL
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true); // Usamos POST para crear el recurso
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Accept-Language: en-US',
+        ]);
+        curl_setopt($ch, CURLOPT_USERPWD, "$username:$password"); // Autenticación básica
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data)); // Enviar datos en formato JSON
+    
+        // Ejecutar cURL y obtener la respuesta
+        $response = curl_exec($ch);
+    
+        // Manejar errores de cURL
+        if (curl_errno($ch)) {
+            return response()->json(['error' => curl_error($ch)], 500);
+        }
+    
+        // Obtener código de respuesta HTTP
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+    
+        // Verificar si la operación fue exitosa
+        if ($httpCode == 201) { // Si el contacto fue creado correctamente
+            return response()->json($response, 201);
+        }
+    
+        // Devolver error en caso de fallo
+        return response()->json(['error' => "Error HTTP: $httpCode", 'response' => $response], $httpCode);
+    }
+    
 }

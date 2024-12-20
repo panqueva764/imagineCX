@@ -9,3 +9,4 @@ Route::get('/', function () {
 
 Route::get('/contacts', [ContactsController::class, 'index']);
 Route::post('/contacts', [ContactsController::class, 'deleteContact'])->name('contacts.deleteContact');
+Route::post('/contacts', [ContactsController::class, 'createContact'])->name('contacts.createContact');
