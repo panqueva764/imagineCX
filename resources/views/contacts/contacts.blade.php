@@ -386,7 +386,7 @@
                 // Realiza la solicitud AJAX a la ruta actual
                 $.ajax({
                     url: window.location.href, // Usamos la misma URL de la página
-                    type: 'POST',
+                    type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}', // Token CSRF
                         id: contactId, // Pasamos el ID del contacto a la función deleteContact
