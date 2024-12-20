@@ -186,6 +186,7 @@
                     <div class="avatar" id="avatar" style="background-image: url('https://via.placeholder.com/80'); background-size: cover;"></div>
                     <div class="contact-header-info">
                         <h2 id="contact-name">Select a Contact</h2>
+                        <h2 id="contact-id">your id is:</h2>
                         <p id="contact-subtitle">Details will appear here</p>
                     </div>
                 </div>
@@ -202,75 +203,115 @@
                         <h3><i class="icon">&#128188;</i>Company</h3>
                         <p id="contact-company"></p>
                     </div>
+
+                    <button id="accionBoton" class="btn btn-primary" data-id="{{ $contact['id'] }}">Ejecutar Acción</button>
+
                 </div>
             </div>
         </main>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-const contacts = @json($contacts['items'] ?? []);
+        const contacts = @json($contacts['items'] ?? []);
 
-// Mostrar el primer contacto por defecto
-if (contacts.length > 0) {
-    showContactDetails(0); // Mostrar el primer contacto
-}
+        // Mostrar el primer contacto por defecto
+        if (contacts.length > 0) {
+            showContactDetails(0); // Mostrar el primer contacto
+        }
 
-// Función para mostrar los detalles del contacto
-function showContactDetails(index) {
-    const contact = contacts[index];
-    if (!contact) return;
+        // Función para mostrar los detalles del contacto
+        function showContactDetails(index) {
+            const contact = contacts[index];
+            if (!contact) return;
 
-    // Datos del contacto
-    document.getElementById('contact-name').textContent = contact.lookupName ?? 'No Name';
-    document.getElementById('contact-subtitle').textContent = `Agregaste este contacto en: ${contact.createdTime ?? 'N/A'}, Actualizado en : ${contact.updatedTime ?? 'N/A'}`;
-    document.getElementById('avatar').style.backgroundImage = `url('https://i.pravatar.cc/150?img=${index + 1}')`;
+            // Datos del contacto
+            document.getElementById('contact-name').textContent = contact.lookupName ?? 'No Name';
+            document.getElementById('contact-id').textContent = contact.id ?? 'No Name';
+            document.getElementById('contact-subtitle').textContent = `Agregaste este contacto en: ${contact.createdTime ?? 'N/A'}, Actualizado en : ${contact.updatedTime ?? 'N/A'}`;
+            document.getElementById('avatar').style.backgroundImage = `url('https://i.pravatar.cc/150?img=${index + 1}')`;
 
-    // Datos aleatorios
-    const phoneNumbers = ['123-456-7890', '555-123-4567', '987-654-3210'];
-    const cities = ['New York', 'London', 'Paris', 'Tokyo', 'Berlin'];
-    const countries = ['USA', 'UK', 'France', 'Japan', 'Germany'];
-    const companies = ['Company A', 'Company B', 'Company C', 'Company D', 'Company E'];
+            // Datos aleatorios
+            const phoneNumbers = ['123-456-7890', '555-123-4567', '987-654-3210'];
+            const cities = ['New York', 'London', 'Paris', 'Tokyo', 'Berlin'];
+            const countries = ['USA', 'UK', 'France', 'Japan', 'Germany'];
+            const companies = ['Company A', 'Company B', 'Company C', 'Company D', 'Company E'];
 
-    // Asignar valores aleatorios
-    document.getElementById('contact-phone').textContent = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
-    document.getElementById('contact-location').textContent = `${cities[Math.floor(Math.random() * cities.length)]}, ${countries[Math.floor(Math.random() * countries.length)]}`;
-    document.getElementById('contact-company').textContent = companies[Math.floor(Math.random() * companies.length)];
-}
+            // Asignar valores aleatorios
+            document.getElementById('contact-phone').textContent = phoneNumbers[Math.floor(Math.random() * phoneNumbers.length)];
+            document.getElementById('contact-location').textContent = `${cities[Math.floor(Math.random() * cities.length)]}, ${countries[Math.floor(Math.random() * countries.length)]}`;
+            document.getElementById('contact-company').textContent = companies[Math.floor(Math.random() * companies.length)];
+        }
 
-// Función para filtrar los contactos
-function filterContacts() {
-    const searchValue = document.getElementById('search-input').value.toLowerCase();
-    const filteredContacts = contacts.filter(contact =>
-        contact.lookupName && contact.lookupName.toLowerCase().includes(searchValue)
-    );
+        // Función para filtrar los contactos
+        function filterContacts() {
+            const searchValue = document.getElementById('search-input').value.toLowerCase();
+            const filteredContacts = contacts.filter(contact =>
+                contact.lookupName && contact.lookupName.toLowerCase().includes(searchValue)
+            );
 
-    // Actualizar la lista de contactos con los resultados filtrados
-    const contactsList = document.getElementById('contacts-list');
-    contactsList.innerHTML = ''; // Limpiar la lista actual
+            // Actualizar la lista de contactos con los resultados filtrados
+            const contactsList = document.getElementById('contacts-list');
+            contactsList.innerHTML = ''; // Limpiar la lista actual
 
-    // Mostrar los contactos filtrados
-    if (filteredContacts.length > 0) {
-        filteredContacts.forEach((contact, filteredIndex) => {
-            const contactElement = document.createElement('div');
-            contactElement.classList.add('contact-item');
-            contactElement.onclick = () => {
-                // Pasamos el índice del contacto filtrado, no el índice original
-                showContactDetails(filteredIndex);
-            };
-            contactElement.innerHTML = `
-                <div class="avatar" style="background-image: url('https://i.pravatar.cc/150?img=${filteredIndex + 1}'); background-size: cover;"></div>
-                <div class="contact-info">
-                    <h3>${contact.lookupName ?? 'No Name'}</h3>
-                    <p>City, Countrysss</p>
-                </div>
-            `;
-            contactsList.appendChild(contactElement);
+            // Mostrar los contactos filtrados
+            if (filteredContacts.length > 0) {
+                filteredContacts.forEach((contact, filteredIndex) => {
+                    const contactElement = document.createElement('div');
+                    contactElement.classList.add('contact-item');
+                    contactElement.onclick = () => {
+                        // Pasamos el índice del contacto filtrado, no el índice original
+                        showContactDetails(filteredIndex);
+                    };
+                    contactElement.innerHTML = `
+                        <div class="avatar" style="background-image: url('https://i.pravatar.cc/150?img=${filteredIndex + 1}'); background-size: cover;"></div>
+                        <div class="contact-info">
+                            <h3>${contact.lookupName ?? 'No Name'}</h3>
+                            <p>City, Countrysss</p>
+                        </div>
+                    `;
+                    contactsList.appendChild(contactElement);
+                });
+            } else {
+                contactsList.innerHTML = '<p>No contacts found.</p>';
+            }
+        }
+        $(document).ready(function() {
+            $('#accionBoton').click(function() {
+                const contactId = document.getElementById('contact-id').textContent.trim(); // Obtener el ID del contacto
+
+                if (!contactId) {
+                    alert('No contact ID available!');
+                    return;
+                }
+
+                // Realiza la solicitud AJAX a la ruta actual
+                $.ajax({
+                    url: window.location.href, // Usamos la misma URL de la página
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}', // Token CSRF
+                        id: contactId, // Pasamos el ID del contacto a la función deleteContact
+                        action: 'delete' // Indica que la acción es de eliminar
+                    },
+                    success: function(response) {
+                        // Verificar si la respuesta tiene el mensaje esperado
+                        if (response.message) {
+                            alert(response.message); // Muestra el mensaje de éxito
+                            // Opcional: Actualizar la página o recargar los contactos
+                            location.reload(); // Recarga la página
+                        } else {
+                            alert('La eliminación fue exitosa, pero no se recibió un mensaje de confirmación.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Manejo de errores
+                        alert('Ocurrió un error');
+                    }
+                });
+            });
         });
-    } else {
-        contactsList.innerHTML = '<p>No contacts found.</p>';
-    }
-}
-</script>
+    </script>
 
-</body>
+    </body>
 </html>
