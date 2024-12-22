@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact List</title>
+    <title>Mis Contactos</title>
     <style>
         * {
             margin: 0;
@@ -232,7 +232,10 @@
                 <input type="search" id="search-input" placeholder="Search contacts" class="search-bar" oninput="filterContacts()">
             </div>
             <div class="create-contact-container">
-            <button id="openModalBtn" class="btn btn-primary"> + </button>
+                <button id="openModalBtn" class="btn btn-primary"> + </button>
+            </div>
+            <div class="search-contact-container">
+                <button id="openSearchModal" class="btn btn-primary">Buscar Contacto</button>
             </div>
         </header>
         <main class="content">
@@ -274,7 +277,7 @@
                         <p id="contact-company"></p>
                     </div>
 
-                    <button id="accionBoton" class="btn btn-primary" data-id="{{ $contact['id'] }}">Ejecutar Acción</button>
+                    <button id="accionBoton" class="btn btn-primary" data-id="{{ $contact['id'] }}">Eliminar Contacto</button>
 
                 </div>
             </div>
@@ -282,33 +285,55 @@
     </div>
 
     <div id="contactModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeModalBtn">&times;</span>
-        <h2>Crear Nuevo Contacto</h2>
-        <form id="createContactForm">
-            <label for="firstName">Nombre</label>
-            <input type="text" id="firstName" name="firstName" required>
+        <div class="modal-content">
+            <span class="close" id="closeModalBtn">&times;</span>
+            <h2>Crear Nuevo Contacto</h2>
+            <form id="createContactForm">
+                <label for="firstName">Nombre</label>
+                <input type="text" id="firstName" name="firstName" required>
 
-            <label for="lastName">Apellido</label>
-            <input type="text" id="lastName" name="lastName" required>
+                <label for="lastName">Apellido</label>
+                <input type="text" id="lastName" name="lastName" required>
 
-            <label for="city">Ciudad</label>
-            <input type="text" id="city" name="city" required>
+                <label for="city">Ciudad</label>
+                <input type="text" id="city" name="city" required>
 
-            <label for="country">País</label>
-            <input type="text" id="country" name="country" required>
+                <label for="country">País</label>
+                <input type="text" id="country" name="country" required>
 
-            <label for="zipCode">Código Postal</label>
-            <input type="text" id="zipCode" name="zipCode" required>
+                <label for="zipCode">Código Postal</label>
+                <input type="text" id="zipCode" name="zipCode" required>
 
-            <label for="address">Dirección</label>
-            <input type="text" id="address" name="address" required>
+                <label for="address">Dirección</label>
+                <input type="text" id="address" name="address" required>
 
-            <button type="submit" id="createContactBtn">Crear Nuevo Contacto</button>
-        </form>
+                <button type="submit" id="createContactBtn">Crear Nuevo Contacto</button>
+            </form>
+        </div>
     </div>
-</div>
+
+    <!-- El Popup -->
+    <div id="searchModal" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Buscar Contacto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="contactId" class="form-control" placeholder="Ingrese el ID del contacto">
+                    <button id="searchContact" class="btn btn-secondary mt-2">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Cargar Bootstrap JS después de jQuery -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <script>
         const contacts = @json($contacts['items'] ?? []);
@@ -379,7 +404,7 @@
                 const contactId = document.getElementById('contact-id').textContent.trim(); // Obtener el ID del contacto
 
                 if (!contactId) {
-                    alert('No contact ID available!');
+                    swal('No contact ID available!');
                     return;
                 }
 
@@ -395,16 +420,32 @@
                     success: function(response) {
                         // Verificar si la respuesta tiene el mensaje esperado
                         if (response.message) {
-                            alert(response.message); // Muestra el mensaje de éxito
+                            swal(
+                                {
+                                    title:'Se ha eliminado el contacto Exitosamente',
+                                    text:'Si quieres volver recuperarlo, ingresa a la papelera',
+                                    icon:'success'
+                                }); // Muestra el mensaje de éxito
                             // Opcional: Actualizar la página o recargar los contactos
-                            location.reload(); // Recarga la página
+                            setTimeout(function() {
+                                location.reload(); // Recarga la página
+                            }, 10000); // Recarga la página
                         } else {
-                            alert('La eliminación fue exitosa, pero no se recibió un mensaje de confirmación.');
+                            swal(
+                                {
+                                    title:'Se ha e',
+                                    text:'Si quieres volver recuperarlo, ingresa a la papelera',
+                                    icon:'success'
+                                });                           
                         }
                     },
                     error: function(xhr, status, error) {
                         // Manejo de errores
-                        alert('Ocurrió un error');
+                        swal(
+                                {
+                                    title:'Ocurrió un error',
+                                    icon:'error'
+                                });     
                     }
                 });
             });
@@ -456,20 +497,39 @@
                         var parsedResponse = JSON.parse(response);  // Si la respuesta es una cadena dentro de un array
                         // Verificar que la respuesta contiene el ID del nuevo contacto
                         if (response) {
-                            alert("¡Nuevo contacto creado con éxito! El ID es: " + parsedResponse.id);
+                            swal("¡Nuevo contacto creado con éxito! El ID es: " + parsedResponse.id);
                         } else {
-                            alert("¡Nuevo contacto creado con éxito!" + response.id);
+                            swal("¡Nuevo contacto creado con éxito!" + response.id);
                         }
                         
                         modal.style.display = "none"; // Cerrar el modal
                         // Actualizar la lista de contactos o recargar la página
-                        location.reload(); // Recarga la página o actualiza la lista de contactos
+                        setTimeout(function() {
+                            location.reload(); // Recarga la página
+                        }, 10000); // Recarga la página o actualiza la lista de contactos
                     },
                     error: function(xhr, status, error) {
-                        alert("Ocurrió un error al crear el contacto.");
+                        swal("Ocurrió un error al crear el contacto.");
                     }
                 });
             }
+
+            // Abrir el modal de búsqueda
+            document.getElementById('openSearchModal').addEventListener('click', function() {
+                $('#searchModal').modal('show');
+            });
+
+            // Buscar contacto
+            document.getElementById('searchContact').addEventListener('click', function() {
+                var contactId = document.getElementById('contactId').value;
+                if (contactId) {
+                    // Abrir la nueva pestaña con la URL de búsqueda
+                    window.open('/contact/' + contactId, '_blank');
+                    $('#searchModal').modal('hide');  // Cerrar el modal
+                } else {
+                    swal('Por favor, ingrese un ID de contacto.');
+                }
+            });
 
     </script>
 

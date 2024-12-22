@@ -8,5 +8,6 @@ Route::get('/', function () {
 });
 
 Route::get('/contacts', [ContactsController::class, 'index']);
+Route::get('/contact/{id}', [ContactsController::class, 'show'])->name('contacts.show');
 Route::delete('/contacts', [ContactsController::class, 'deleteContact'])->name('contacts.deleteContact');
 Route::post('/contacts', [ContactsController::class, 'createContact'])->name('contacts.createContact');

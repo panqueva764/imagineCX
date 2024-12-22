@@ -50,6 +50,42 @@ class ContactsController extends Controller
         return response()->json(['error' => "Error HTTP: $httpCode", 'response' => $response], $httpCode);
     }
 
+    public function show($id)
+    {
+        // URL de la API para obtener el contacto por ID
+        $url = config('services.oracle.url') . 'contacts/' . $id;
+        $username = config('services.oracle.user');
+        $password = config('services.oracle.password');
+
+        // Inicializar cURL
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Accept-Language: en-US',
+        ]);
+        curl_setopt($ch, CURLOPT_USERPWD, "$username:$password");
+
+        // Ejecutar cURL
+        $response = curl_exec($ch);
+
+        // Verificar errores de cURL
+        if (curl_errno($ch)) {
+            return response()->json(['error' => curl_error($ch)], 500);
+        }
+
+        // Verificar código de respuesta HTTP
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode == 200) {
+            $contact = json_decode($response, true);
+            return view('contacts.contact', compact('contact'));
+        }
+
+        return response()->json(['error' => "Error HTTP: $httpCode", 'response' => $response], $httpCode);
+    }
+
     public function deleteContact(Request $request)
     {
         // Validar que se recibió el ID
