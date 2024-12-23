@@ -1,66 +1,149 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+README: Aplicación Web de Gestor de Contactos
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Descripción del Proyecto
 
-## About Laravel
+Esta aplicación web, desarrollada con Laravel y utilizando Lando para la configuración del entorno, permite la gestión de contactos mediante el consumo de APIs REST de Oracle Service Cloud. Las principales funcionalidades incluyen:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Consultar contactos existentes (por ciudad, nombre, correo y teléfono).
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Crear nuevos contactos.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Eliminar contactos existentes.
 
-## Learning Laravel
+Almacenar los resultados de consultas en una base de datos local para acceso offline.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Nota: La funcionalidad de edición de contactos no está disponible debido a problemas con el endpoint REST proporcionado.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Tecnologías Utilizadas
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Framework: Laravel
 
-## Laravel Sponsors
+Gestor de Entornos: Lando
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Frontend: Blade, AJAX, Bootstrap
 
-### Premium Partners
+Control de Versiones: Git (Git Workflow)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Base de Datos: MySQL (integrada en Lando)
 
-## Contributing
+Requisitos Previos
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Antes de instalar y ejecutar la aplicación, asegúrate de tener instalados:
 
-## Code of Conduct
+Lando: Guía de Instalación de Lando
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Git: Guía de Instalación de Git
 
-## Security Vulnerabilities
+Navegador Web: Preferiblemente Google Chrome o Firefox.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Instalación
 
-## License
+Sigue estos pasos para configurar y ejecutar la aplicación en tu entorno local:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. Clonar el Repositorio
+
+Clona el repositorio desde GitHub usando el siguiente comando:
+
+git clone <URL_DEL_REPOSITORIO>
+cd <NOMBRE_DEL_REPOSITORIO>
+
+2. Configurar el Entorno de Lando
+
+Crea y configura el archivo .lando.yml en el directorio del proyecto. Este archivo ya está incluido en el repositorio y define los servicios necesarios (PHP, MySQL, etc.).
+
+Ejecuta el siguiente comando para iniciar los servicios:
+
+lando start
+
+Esto generará la URL local y los puertos necesarios para acceder a la aplicación.
+
+3. Instalar Dependencias de PHP
+
+Instala las dependencias necesarias de Laravel mediante Composer (incluido en Lando):
+
+lando composer install
+
+4. Configurar el Archivo .env
+
+Copia el archivo .env.example y renómbralo como .env:
+
+cp .env.example .env
+
+Actualiza las variables de entorno en el archivo .env para que coincidan con la configuración de tu base de datos. Por ejemplo:
+
+DB_CONNECTION=mysql
+DB_HOST=database
+DB_PORT=3306
+DB_DATABASE=lando
+DB_USERNAME=lando
+DB_PASSWORD=lando
+
+5. Generar la Key de la Aplicación
+
+Ejecuta el siguiente comando para generar una key única para la aplicación:
+
+lando artisan key:generate
+
+6. Migrar la Base de Datos
+
+Ejecuta las migraciones para crear las tablas necesarias en la base de datos:
+
+lando artisan migrate
+
+7. Ejecutar la Aplicación
+
+Inicia el servidor de desarrollo de Laravel:
+
+lando artisan serve
+
+Accede a la aplicación a través de la URL generada, normalmente http://localhost:8000 o el puerto configurado por Lando.
+
+Uso de la Aplicación
+
+Consultar Contactos: Usa el formulario en la página principal para buscar contactos por ciudad, nombre, correo o teléfono. Los resultados se mostrarán en una tabla.
+
+Crear Nuevos Contactos: Completa el formulario de creación y envíalo para agregar un nuevo contacto.
+
+Eliminar Contactos: Utiliza el botón de eliminar asociado a cada contacto en la tabla de resultados.
+
+Persistencia Offline: Si el servicio REST no está disponible, los últimos resultados consultados se cargarán desde la base de datos local.
+
+Manejo de Errores
+
+Se implementaron mensajes claros para el usuario en caso de errores en las llamadas al API REST.
+
+Los errores del sistema se registran en el archivo storage/logs/laravel.log.
+
+Estructura del Proyecto
+
+app/Http/Controllers: Contiene los controladores para manejar las solicitudes del usuario.
+
+app/Services: Lógica para el consumo de las APIs REST.
+
+resources/views: Plantillas Blade para el frontend.
+
+public/js: Scripts JavaScript para manejar las llamadas AJAX.
+
+Control de Versiones
+
+El proyecto utiliza Git Workflow con las siguientes ramas principales:
+
+main: Contiene la versión estable del código.
+
+develop: Rama de desarrollo activa.
+
+feature/: Ramas para implementar nuevas funcionalidades.
+
+Asegúrate de realizar PRs hacia la rama develop antes de fusionar cambios.
+
+Problemas Conocidos
+
+Endpoint de Edición: El API REST para la actualización de contactos no funcionó durante el desarrollo, por lo que esta funcionalidad no está disponible.
+
+Autores
+
+Proyecto desarrollado por [Tu Nombre/Equipo].
+
+Contacto
+
+Para cualquier duda o comentario, por favor contacta a: [panqueva763@gmail.com].
