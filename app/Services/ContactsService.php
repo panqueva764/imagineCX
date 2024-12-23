@@ -56,6 +56,9 @@ class ContactsService
         if ($response['status'] === 200) {
             return json_decode($response['data'], true);
         }
+        else{
+            return [];
+        }
 
         throw new \Exception("Error al obtener contacto: " . $response['data'], $response['status']);
     }

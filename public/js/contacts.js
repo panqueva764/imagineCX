@@ -3,6 +3,54 @@ const contacts = window.contacts;
 if (contacts.length > 0) {
     showContactDetails(0); // Mostrar el primer contacto
 }
+// Obtener los contactos desde la API
+fetch('http://imaginecx.lndo.site/contacts')
+    .then(response => response.text())
+    .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const scriptTags = doc.querySelectorAll('script');
+        let contactsData = null;
+
+        scriptTags.forEach(script => {
+            if (script.textContent.includes('window.contacts')) {
+                const match = script.textContent.match(/window\.contacts\s*=\s*(\[[\s\S]*?\]);/);
+                if (match) {
+                    contactsData = JSON.parse(match[1]);
+                }
+            }
+        });
+
+        if (contactsData) {
+            console.log('Contactos extraídos:', contactsData);
+            localStorage.setItem('contactos', JSON.stringify(contactsData)); // Guardar en localStorage
+        } else {
+            console.error('No se encontró la variable "window.contacts" en el HTML.');
+        }
+    })
+    .catch(error => console.error('Error al obtener datos de la API:', error));
+
+// Función para descargar los datos almacenados en localStorage
+function descargarDatos() {
+    const data = localStorage.getItem('contactos');
+    if (!data) {
+        alert('No hay datos en caché para descargar.');
+        return;
+    }
+
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'contactos.json';
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+// Añadir un botón en el HTML para descargar
+document.body.innerHTML += '<button onclick="descargarDatos()" class="download-button" aria-label="Descargar Contactos">  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>    <polyline points="7 10 12 15 17 10"></polyline>    <line x1="12" y1="15" x2="12" y2="3"></line>  </svg></button><style>.download-button {  position: fixed;  bottom: 20px;  right: 20px;  width: 56px;  height: 56px;  border-radius: 50%;  background-color: #007BFF;  color: #FFFFFF;  border: none;  cursor: pointer;  box-shadow: 0 2px 10px rgba(0, 123, 255, 0.5);  transition: all 0.3s ease;  display: flex;  align-items: center;  justify-content: center;  outline: none;}.download-button:hover {  background-color: #0056b3;  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.7);  transform: translateY(-2px);}.download-button:active {  transform: translateY(0);  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.5);}.download-button svg {  width: 24px;  height: 24px;}</style>';
 
 // Función para verificar si el dispositivo está en modo móvil
 function isMobile() {
